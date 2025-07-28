@@ -1,5 +1,6 @@
-datasets
-evaluate
+datasets==4.0.0
+evaluate==0.4.5
 jiwer
-transformers
+transformers==4.54.0
 librosa
+torchcodec==0.3
