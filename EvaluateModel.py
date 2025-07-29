@@ -86,17 +86,21 @@ if __name__ == "__main__":
     
     ds = {}
     with Pool(processes=cpu_count()) as pool:
+        results = {}
         for subset in subsets:
             logger.info(f"Loading dataset for {subset} subset...")
-            ds[subset] = pool.apply_async(
+            results[subset] = pool.apply_async(
                 load_dataset,
                 args=("rbcurzon/ph_dialect_asr", subset, {"split": "test"}),
             )
+        pool.close()
+        pool.join()
+        ds = {subset: results[subset].get() for subset in subsets}
     
     evaluation_results = {}
-    for dataset, result in ds.items():
+    for dataset, test_data in ds.items():
         logger.info(f"Evaluating model on {dataset} dataset...")
-        evaluation_results[dataset] = evaluate_model(pipe, result.get())
+        evaluation_results[dataset] = evaluate_model(pipe, test_data)
 
     logger.info("Plotting results...")
 
