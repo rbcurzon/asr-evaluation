@@ -14,7 +14,7 @@ from transformers.pipelines.pt_utils import KeyDataset
 from datasets import load_dataset
 from evaluate import load
 
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
