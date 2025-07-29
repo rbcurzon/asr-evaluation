@@ -60,6 +60,8 @@ def evaluate_model(pipe, test_data):
 
 if __name__ == "__main__":
 
+    logger.info(len(sys.argv))
+
     if len(sys.argv) != 2:
         logger.error("Usage: python EvaluateModel.py <model_path>")
         sys.exit(1)
@@ -82,13 +84,19 @@ if __name__ == "__main__":
 
     subsets = ["bik", "ceb", "hil", "ilo", "mrw", "pag", "tgl", "war", "pam", "bisaya"]
     
-    evaluation_results = {}
+    ds = {}
     with Pool(processes=cpu_count()) as pool:
         for subset in subsets:
-            logger.info(f"Evaluating model on subset: {subset}")
-            test_data = load_dataset("tagalog-speech", subset, split="test")
-            result = pool.apply_async(evaluate_model, (pipe, test_data))
-            evaluation_results[subset] = result.get()
+            logger.info(f"Loading dataset for {subset} subset...")
+            ds[subset] = pool.apply_async(
+                load_dataset,
+                args=("rbcurzon/ph_dialect_asr", subset, {"split": "test"}),
+            )
+    
+    evaluation_results = {}
+    for dataset, result in ds.items():
+        logger.info(f"Evaluating model on {dataset} dataset...")
+        evaluation_results[dataset] = evaluate_model(pipe, result.get())
 
     logger.info("Plotting results...")
 
