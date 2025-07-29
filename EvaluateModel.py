@@ -91,7 +91,8 @@ if __name__ == "__main__":
             logger.info(f"Loading dataset for {subset} subset...")
             results[subset] = pool.apply_async(
                 load_dataset,
-                args=("rbcurzon/ph_dialect_asr", subset, {"split": "test"}),
+                args=("rbcurzon/ph_dialect_asr", subset),
+                kwds={"split": "test"},
             )
         pool.close()
         pool.join()
