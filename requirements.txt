@@ -1,5 +1,6 @@
-datasets==4.0.0
-evaluate==0.4.5
+datasets==2.16
+huggingface-hub==0.34
+evaluate
 jiwer
 transformers==4.54.0
 librosa
