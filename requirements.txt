@@ -1,9 +1,9 @@
 datasets==3.5.0
+datasets[audio]
 huggingface-hub==0.34
-evaluate
-jiwer
 transformers[torch]==4.53.0
 torchaudio
+evaluate
+jiwer
 librosa
-datasets[audio]
 matplotlib
