@@ -14,7 +14,7 @@ from transformers.pipelines.pt_utils import KeyDataset
 from datasets import load_dataset
 from evaluate import load
 
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 def evaluate_model(pipe, test_data):
@@ -90,8 +90,6 @@ def plot_results(evaluation_results):
 
 
 if __name__ == "__main__":
-
-    logging.info(len(sys.argv))
 
     if len(sys.argv) != 2:
         logging.error("Usage: python EvaluateModel.py <model_path>")

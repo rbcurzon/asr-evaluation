@@ -3,6 +3,7 @@ huggingface-hub==0.34
 evaluate
 jiwer
 transformers[torch]==4.53.0
+torchaudio
 librosa
 datasets[audio]
 matplotlib
