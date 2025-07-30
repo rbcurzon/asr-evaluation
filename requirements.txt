@@ -1,7 +1,7 @@
-datasets==2.16
+datasets==3.5.0
 huggingface-hub==0.34
 evaluate
 jiwer
-transformers==4.54.0
+transformers==4.53.0
 librosa
-torchcodec==0.3
+datasets[audio]
