@@ -16,7 +16,6 @@ from evaluate import load
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
 
 def evaluate_model(pipe, test_data):
     """
@@ -29,7 +28,7 @@ def evaluate_model(pipe, test_data):
     Returns:
         A dictionary containing evaluation metrics.
     """
-    logger.info("Starting model evaluation...")
+    logging.info("Starting model evaluation...")
 
     all_predictions = [
         pred["text"]
@@ -53,61 +52,16 @@ def evaluate_model(pipe, test_data):
         references=test_data["transcription"], predictions=all_predictions
     )
 
-    logger.info("Model evaluation completed.")
+    logging.info("Model evaluation completed.")
     
     return wer
 
 
-if __name__ == "__main__":
-
-    logger.info(len(sys.argv))
-
-    if len(sys.argv) != 2:
-        logger.error("Usage: python EvaluateModel.py <model_path>")
-        sys.exit(1)
-
-
-    if torch.cuda.is_available():
-        device = 0                 # GPU‑0
-        torch_dtype = torch.float16
-    else:
-        device = -1                # CPU
-        torch_dtype = torch.float32
-
-    model_path = sys.argv[1]
-    pipe = pipeline(
-        "automatic-speech-recognition",
-        model=model_path,
-        device=device,
-        torch_dtype=torch_dtype,
-    )
-
-    subsets = ["bik", "ceb", "hil", "ilo", "mrw", "pag", "tgl", "war", "pam", "bisaya"]
-    
-    ds = {}
-    with Pool(processes=cpu_count()) as pool:
-        results = {}
-        for subset in subsets:
-            logger.info(f"Loading dataset for {subset} subset...")
-            results[subset] = pool.apply_async(
-                load_dataset,
-                args=("rbcurzon/ph_dialect_asr", subset),
-                kwds={"split": "test"},
-            )
-        pool.close()
-        pool.join()
-        ds = {subset: results[subset].get() for subset in subsets}
-    
-    evaluation_results = {}
-    for dataset, test_data in ds.items():
-        logger.info(f"Evaluating model on {dataset} dataset...")
-        evaluation_results[dataset] = evaluate_model(pipe, test_data)
-
-    logger.info("Plotting results...")
+def plot_results(evaluation_results):
 
     fig, ax = plt.subplots()
 
-    y_pos = np.arange(len(subsets))
+    y_pos = np.arange(len(evaluation_results))
 
     small_model = list(evaluation_results.values())
 
@@ -133,3 +87,52 @@ if __name__ == "__main__":
     plt.tight_layout()
     plt.savefig("small_model_wer.png", dpi=300)
     plt.show()
+
+
+if __name__ == "__main__":
+
+    logging.info(len(sys.argv))
+
+    if len(sys.argv) != 2:
+        logging.error("Usage: python EvaluateModel.py <model_path>")
+        sys.exit(1)
+
+
+    if torch.cuda.is_available():
+        device = 0                 # GPU‑0
+        torch_dtype = torch.float16
+    else:
+        device = -1                # CPU
+        torch_dtype = torch.float32
+
+    model_path = sys.argv[1]
+    pipe = pipeline(
+        "automatic-speech-recognition",
+        model=model_path,
+        device=device,
+        torch_dtype=torch_dtype,
+    )
+
+    subsets = ["bik", "ceb", "hil", "ilo", "mrw", "pag", "tgl", "war", "pam", "bisaya"]
+    
+    ds = {}
+    with Pool(processes=cpu_count()) as pool:
+        results = {}
+        for subset in subsets:
+            logging.info(f"Loading dataset for {subset} subset...")
+            results[subset] = pool.apply_async(
+                load_dataset,
+                args=("rbcurzon/ph_dialect_asr", subset),
+                kwds={"split": "test"},
+            )
+        pool.close()
+        pool.join()
+        ds = {subset: results[subset].get() for subset in subsets}
+    
+    evaluation_results = {}
+    for dataset, test_data in ds.items():
+        logging.info(f"Evaluating model on {dataset} dataset...")
+        evaluation_results[dataset] = evaluate_model(pipe, test_data)
+
+    logging.info("Plotting results...")
+    plot_results(evaluation_results)
