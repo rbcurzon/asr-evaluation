@@ -57,17 +57,17 @@ def evaluate_model(pipe, test_data):
     return wer
 
 
-def plot_results(evaluation_results):
+def plot_results(evaluation_results, model_name):
 
     fig, ax = plt.subplots()
 
     y_pos = np.arange(len(evaluation_results))
 
-    small_model = list(evaluation_results.values())
+    results_list = list(evaluation_results.values())
 
     # medium_model = [16.030283080974325, 21.57816005983545, 15.73165947430365, 17.93032786885246]
 
-    for model, scores in zip(['small'], [small_model]):
+    for model, scores in zip([model_name], [results_list]):
         ax.barh(y_pos, scores, height=0.4, color='steelblue', label=model)
 
     for i, v in enumerate(scores):
@@ -76,23 +76,23 @@ def plot_results(evaluation_results):
     ax.set_yticks(y_pos)
     ax.set_yticklabels(evaluation_results.keys(), fontsize=10)
     ax.invert_yaxis()
-
+    
     ax.set_xlabel('Word Error Rate (%)', fontsize=12)
-    ax.set_title('WER by Dialect – Small Model', fontsize=14, fontweight='bold')
+    ax.set_title(f'WER by Dialect – {model_name}', fontsize=14, fontweight='bold')
     ax.legend(loc='upper right', fontsize=10)
 
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
     plt.tight_layout()
-    plt.savefig("small_model_wer.png", dpi=300)
+    plt.savefig(f"{model_name}_wer.png", dpi=300)
     plt.show()
 
 
 if __name__ == "__main__":
 
     if len(sys.argv) != 2:
-        logging.error("Usage: python EvaluateModel.py <model_path>")
+        logging.error("Usage: python EvaluateModel.py <model>")
         sys.exit(1)
 
 
@@ -103,10 +103,10 @@ if __name__ == "__main__":
         device = -1                # CPU
         torch_dtype = torch.float32
 
-    model_path = sys.argv[1]
+    model = sys.argv[1]
     pipe = pipeline(
         "automatic-speech-recognition",
-        model=model_path,
+        model=model,
         device=device,
         torch_dtype=torch_dtype,
     )
