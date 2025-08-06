@@ -133,4 +133,4 @@ if __name__ == "__main__":
         evaluation_results[dataset] = evaluate_model(pipe, test_data)
 
     logging.info("Plotting results...")
-    plot_results(evaluation_results)
+    plot_results(evaluation_results, model)
