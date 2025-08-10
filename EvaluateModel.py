@@ -89,8 +89,7 @@ def plot_results(evaluation_results, model_name):
     plt.show()
 
 
-if __name__ == "__main__":
-
+def main():
     if len(sys.argv) != 2:
         logging.error("Usage: python EvaluateModel.py <model>")
         sys.exit(1)
@@ -134,3 +133,6 @@ if __name__ == "__main__":
 
     logging.info("Plotting results...")
     plot_results(evaluation_results, model.split("/")[-1])
+
+if __name__ == "__main__":
+    main()
