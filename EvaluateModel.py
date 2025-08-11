@@ -110,7 +110,7 @@ def main():
         torch_dtype=torch_dtype,
     )
 
-    subsets = ["bik", "ceb", "hil", "ilo", "mrw", "pag", "tgl", "war", "pam", "bisaya"]
+    subsets = ["bik", "ceb", "hil", "ilo", "mrw", "pag", "tgl", "war", "pam"]
     
     ds = {}
     with Pool(processes=cpu_count()) as pool:
