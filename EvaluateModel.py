@@ -131,6 +131,15 @@ def main():
         logging.info(f"Evaluating model on {dataset} dataset...")
         evaluation_results[dataset] = evaluate_model(pipe, test_data)
 
+    if all(k in evaluation_results for k in ["ceb", "hil", "ilo"]):
+        evaluation_results['bisaya'] = round(
+            (evaluation_results["ceb"] + evaluation_results["hil"] + evaluation_results["ilo"]) / 3, 2
+        )
+    else:
+        logging.warning(
+            "One or more dialects (ceb, hil, ilo) are missing from evaluation_results. Skipping 'bisaya' average calculation."
+        )
+
     logging.info("Plotting results...")
     plot_results(evaluation_results, model.split("/")[-1])
 
